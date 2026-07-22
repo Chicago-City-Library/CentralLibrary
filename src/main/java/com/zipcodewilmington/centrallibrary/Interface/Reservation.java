@@ -1,4 +1,4 @@
-package com.zipcodewilmington.centrallibrary.Interface
+package com.zipcodewilmington.centrallibrary.Interface;
 
 import com.zipcodewilmington.centrallibrary.model.LibraryMember;
 
