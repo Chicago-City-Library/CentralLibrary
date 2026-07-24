@@ -172,6 +172,4 @@ public class Book extends LibraryItem implements Reservable {
         return "Book";
 
     }
-
 }
-
