@@ -1,5 +1,4 @@
-
-
+package com.zipcodewilmington.centrallibrary.model;
 
 public class Book extends LibraryItem implements Reservable {
 
