@@ -1,4 +1,5 @@
 package com.zipcodewilmington.centrallibrary.model;
+<<<<<<< HEAD
 
 
 public class DVD extends LibraryItem implements Reservable {
@@ -149,3 +150,5 @@ public class DVD extends LibraryItem implements Reservable {
     }
 
 }
+=======
+>>>>>>> origin/mecca-personnel

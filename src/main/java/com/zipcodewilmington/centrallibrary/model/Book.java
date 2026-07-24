@@ -1,4 +1,5 @@
 package com.zipcodewilmington.centrallibrary.model;
+<<<<<<< HEAD
 
 //import java.time.LocalDate;
 
@@ -174,3 +175,5 @@ public class Book extends LibraryItem implements Reservable {
     }
 
 }
+=======
+>>>>>>> origin/mecca-personnel
