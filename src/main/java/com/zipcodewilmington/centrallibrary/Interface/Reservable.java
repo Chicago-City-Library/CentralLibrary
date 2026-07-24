@@ -2,7 +2,7 @@ package com.zipcodewilmington.centrallibrary.Interface;
 
 import com.zipcodewilmington.centrallibrary.model.LibraryMember;
 
-public interface Reservation {
+public interface Reservable {
 
     boolean isReserved();
     LibraryMember getReservedBy();

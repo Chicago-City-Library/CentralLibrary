@@ -1,5 +1,4 @@
 package com.zipcodewilmington.centrallibrary.model;
-<<<<<<< HEAD
 
 import java.time.LocalDate;
 
@@ -144,5 +143,3 @@ public class Periodical extends LibraryItem {
     }
 
 }
-=======
->>>>>>> origin/mecca-personnel

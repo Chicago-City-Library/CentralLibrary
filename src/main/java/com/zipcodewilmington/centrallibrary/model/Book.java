@@ -1,5 +1,4 @@
 package com.zipcodewilmington.centrallibrary.model;
-<<<<<<< HEAD
 
 //import java.time.LocalDate;
 
@@ -83,7 +82,7 @@ public class Book extends LibraryItem implements Reservable {
     }
 
     public void setPages(int pages) {
-        if (page > 0) {
+        if (pages > 0) {
         this.pages = pages;
         }
     }
@@ -175,5 +174,4 @@ public class Book extends LibraryItem implements Reservable {
     }
 
 }
-=======
->>>>>>> origin/mecca-personnel
+

@@ -1,5 +1,4 @@
 package com.zipcodewilmington.centrallibrary.model;
-<<<<<<< HEAD
 
 
 public abstract class LibraryItem implements Searchable {
@@ -100,5 +99,3 @@ public abstract class LibraryItem implements Searchable {
     public abstract String getItemType();
 
 }
-=======
->>>>>>> origin/mecca-personnel
