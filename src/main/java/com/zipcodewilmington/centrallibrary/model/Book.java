@@ -1,12 +1,9 @@
 package com.zipcodewilmington.centrallibrary.model;
 
 //import java.time.LocalDate;
-
 public class Book extends LibraryItem implements Reservable {
 
-
     // Instance Variables
-
     private String author;
     //private String language;
     //private String subjects;
@@ -20,9 +17,7 @@ public class Book extends LibraryItem implements Reservable {
     private boolean reserved;
     private LibraryMember reservedBy;
 
-
     // Constructor
-
     public Book(String id,
             String title,
             String location,
@@ -37,24 +32,22 @@ public class Book extends LibraryItem implements Reservable {
             //String type) {
             String genre) {
 
-    super(id, title, location);
+        super(id, title, location);
 
-    this.author = author;
-    //this.language = language;
-    //this.subject = subject;
-    //this.locc = locc;
-    //this.bookshelve = bookshelves;
-    //this.issued = issued;
-    this.isbn = isbn;
-    this.pages = pages;
-    this.genre = genre;
-    //this.type = type;
+        this.author = author;
+        //this.language = language;
+        //this.subject = subject;
+        //this.locc = locc;
+        //this.bookshelve = bookshelves;
+        //this.issued = issued;
+        this.isbn = isbn;
+        this.pages = pages;
+        this.genre = genre;
+        //this.type = type;
 
     }
 
-
     // Getters & Setters
-
     public String getAuthor() {
         return author;
 
@@ -62,7 +55,7 @@ public class Book extends LibraryItem implements Reservable {
 
     public void setAuthor(String author) {
         if (author != null && !author.isBlank()) {
-        this.author = author;
+            this.author = author;
         }
     }
 
@@ -83,7 +76,7 @@ public class Book extends LibraryItem implements Reservable {
 
     public void setPages(int pages) {
         if (pages > 0) {
-        this.pages = pages;
+            this.pages = pages;
         }
     }
 
@@ -97,9 +90,7 @@ public class Book extends LibraryItem implements Reservable {
 
     }
 
-
     // Reservable Methods
-
     @Override
     public void reserve(LibraryMember member) {
         if (!reserved) {
@@ -121,25 +112,53 @@ public class Book extends LibraryItem implements Reservable {
 
     }
 
-
     // Searchable Methods
-
     @Override
     public boolean matchesKeyword(String keyword) {
         for (String field : getSearchableFields()) {
-            if (field != null &&
-                field.toLowerCase().contains(keyword.toLowerCase())) {
-                
-                    return true;
+            if (field != null
+                    && field.toLowerCase().contains(keyword.toLowerCase())) {
+
+                return true;
             }
-        } 
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean matchesField(String fieldName, String keyword) {
+
+        if (fieldName == null || keyword == null || keyword.isBlank()) {
+            return false;
+        }
+
+        if (fieldName.equalsIgnoreCase("title")) {
+            return getTitle() != null
+                    && getTitle().toLowerCase().contains(keyword.toLowerCase());
+        }
+
+        if (fieldName.equalsIgnoreCase("author")) {
+            return author != null
+                    && author.toLowerCase().contains(keyword.toLowerCase());
+        }
+
+        if (fieldName.equalsIgnoreCase("isbn")) {
+            return isbn != null
+                    && isbn.toLowerCase().contains(keyword.toLowerCase());
+        }
+        
+        if (fieldName.equalsIgnoreCase("genre")) {
+            return genre != null
+                    && genre.toLowerCase().contains(keyword.toLowerCase());
+        }
 
         return false;
     }
 
     @Override
     public String[] getSearchableFields() {
-        return new String[] {
+        return new String[]{
             getTitle(),
             author,
             //language,
@@ -152,9 +171,7 @@ public class Book extends LibraryItem implements Reservable {
 
     }
 
-
     // LibraryItem Abstract Methods
-
     @Override
     public double calculateLateFee(int daysLate) {
         return daysLate * 0.50;

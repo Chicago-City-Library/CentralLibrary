@@ -1,5 +1,7 @@
 package com.zipcodewilmington.centrallibrary.model;
 
+import com.zipcodewilmington.centrallibrary.Interface.Searchable;
+
 public abstract class LibraryItem implements Searchable {
 
 
