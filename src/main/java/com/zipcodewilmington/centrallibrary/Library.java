@@ -10,6 +10,7 @@ import java.util.List;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zipcodewilmington.centrallibrary.Interface.Reservable;
+import com.zipcodewilmington.centrallibrary.model.Book;
 import com.zipcodewilmington.centrallibrary.model.DVD;
 import com.zipcodewilmington.centrallibrary.model.LibraryItem;
 import com.zipcodewilmington.centrallibrary.model.LibraryMember;
@@ -29,12 +30,89 @@ public class Library {
         // Prevents duplicates if loadData() runs twice.
         items.clear();
 
+        loadBooks();
         loadMovies();
         loadPeriodicals();
 
         System.out.println();
         System.out.println(
                 "Total library items loaded: " + items.size()
+        );
+    }
+
+    // Loads books from matts_cool_catalog.json.
+// Loads books from matts_cool_catalog.json.
+    private void loadBooks() {
+
+        JsonNode books = readJsonFile(
+                "src/main/resourses/data/matts_cool_catalog.json"
+        );
+
+        if (books == null || !books.isArray()) {
+
+            System.out.println(
+                    "Book data could not be loaded."
+            );
+
+            return;
+        }
+
+        int loadedCount = 0;
+
+        for (JsonNode record : books) {
+
+            try {
+
+                String isbn = record.path("ISBN")
+                        .asText();
+
+                String title = record.path("Title")
+                        .asText("Unknown Title");
+
+                String author = record.path("Author_Name")
+                        .asText("Unknown Author");
+
+                String genre = record.path("Bookshelves")
+                        .asText("Unknown Genre");
+
+                /*
+             * The JSON does not contain a page count,
+             * so zero is used for now.
+                 */
+                int pages = 0;
+
+                /*
+             * Uses the ISBN value to create
+             * a unique library item ID.
+                 */
+                if (isbn.isBlank()) {
+                    continue;
+                }
+
+                Book book = new Book(
+                        "B" + isbn,
+                        title,
+                        "Book Section",
+                        author,
+                        isbn,
+                        pages,
+                        genre
+                );
+
+                items.add(book);
+                loadedCount++;
+
+            } catch (Exception exception) {
+
+                System.out.println(
+                        "A book record could not be loaded."
+                );
+            }
+        }
+
+        System.out.println(
+                loadedCount
+                + " books loaded successfully."
         );
     }
 
@@ -166,8 +244,8 @@ public class Library {
                     continue;
                 }
 
-                LocalDate publicationDate =
-                        createDate(dateText, volume);
+                LocalDate publicationDate
+                        = createDate(dateText, volume);
 
                 Periodical periodical = new Periodical(
                         id,
@@ -194,7 +272,7 @@ public class Library {
 
         System.out.println(
                 loadedCount
-                        + " periodicals loaded successfully."
+                + " periodicals loaded successfully."
         );
     }
 
@@ -229,7 +307,7 @@ public class Library {
 
             System.out.println(
                     "Looking for file at: "
-                            + path.toAbsolutePath()
+                    + path.toAbsolutePath()
             );
 
             if (!Files.exists(path)) {
@@ -249,7 +327,7 @@ public class Library {
 
             System.out.println(
                     "Error reading JSON: "
-                            + exception.getMessage()
+                    + exception.getMessage()
             );
 
             return null;
@@ -262,8 +340,8 @@ public class Library {
 
         List<LibraryItem> results = new ArrayList<>();
 
-        String safeKeyword =
-                keyword == null
+        String safeKeyword
+                = keyword == null
                         ? ""
                         : keyword.trim();
 
@@ -278,12 +356,44 @@ public class Library {
 
         return results;
     }
+// Searches one item type using one specific field.
+
+    public List<LibraryItem> searchByField(
+            Class<? extends LibraryItem> itemType,
+            String fieldName,
+            String keyword) {
+
+        List<LibraryItem> results = new ArrayList<>();
+
+        if (itemType == null
+                || fieldName == null
+                || keyword == null
+                || keyword.isBlank()) {
+
+            return results;
+        }
+
+        String safeKeyword = keyword.trim();
+
+        for (LibraryItem item : items) {
+
+            if (itemType.isInstance(item)
+                    && item.matchesField(
+                            fieldName,
+                            safeKeyword)) {
+
+                results.add(item);
+            }
+        }
+
+        return results;
+    }
 
     // Returns every item marked unavailable.
     public List<LibraryItem> getCheckedOutItems() {
 
-        List<LibraryItem> checkedOutItems =
-                new ArrayList<>();
+        List<LibraryItem> checkedOutItems
+                = new ArrayList<>();
 
         for (LibraryItem item : items) {
 
@@ -329,8 +439,8 @@ public class Library {
             return false;
         }
 
-        Reservable reservable =
-                (Reservable) item;
+        Reservable reservable
+                = (Reservable) item;
 
         if (reservable.isReserved()) {
             return false;
@@ -350,8 +460,8 @@ public class Library {
             return false;
         }
 
-        Reservable reservable =
-                (Reservable) item;
+        Reservable reservable
+                = (Reservable) item;
 
         if (!reservable.isReserved()) {
             return false;
@@ -377,8 +487,8 @@ public class Library {
         // the item may check it out.
         if (item instanceof Reservable) {
 
-            Reservable reservable =
-                    (Reservable) item;
+            Reservable reservable
+                    = (Reservable) item;
 
             if (reservable.isReserved()
                     && reservable.getReservedBy()
@@ -388,15 +498,15 @@ public class Library {
             }
         }
 
-        boolean checkedOut =
-                item.checkOut(member);
+        boolean checkedOut
+                = item.checkOut(member);
 
         // Removes the reservation after checkout.
         if (checkedOut
                 && item instanceof Reservable) {
 
-            Reservable reservable =
-                    (Reservable) item;
+            Reservable reservable
+                    = (Reservable) item;
 
             if (reservable.isReserved()) {
                 reservable.cancelReserve();
