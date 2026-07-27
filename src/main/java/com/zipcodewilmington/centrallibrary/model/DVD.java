@@ -1,10 +1,10 @@
 package com.zipcodewilmington.centrallibrary.model;
 
+import com.zipcodewilmington.centrallibrary.Interface.Reservable;
 
 public class DVD extends LibraryItem implements Reservable {
 
-
-    // Instance Variables (Owned by DVD)
+    // Instance Variables
 
     private String director;
     private int duration;
@@ -14,23 +14,30 @@ public class DVD extends LibraryItem implements Reservable {
     private LibraryMember reservedBy;
 
 
-    // Constructor
+    // No-argument constructor used by Jackson
 
-    public DVD(String id,
-           String title,
-           String location,
-           String director,
-           int duration,
-           String rating,
-           String genre) {
+    public DVD() {
+        super();
+    }
 
-    super(id, title, location);
 
-    this.director = director;
-    this.duration = duration;
-    this.rating = rating;
-    this.genre = genre;
+    // Constructor used when manually creating DVDs
 
+    public DVD(
+            String id,
+            String title,
+            String location,
+            String director,
+            int duration,
+            String rating,
+            String genre) {
+
+        super(id, title, location);
+
+        this.director = director;
+        this.duration = duration;
+        this.rating = rating;
+        this.genre = genre;
     }
 
 
@@ -38,7 +45,6 @@ public class DVD extends LibraryItem implements Reservable {
 
     public String getDirector() {
         return director;
-
     }
 
     public void setDirector(String director) {
@@ -49,7 +55,6 @@ public class DVD extends LibraryItem implements Reservable {
 
     public int getDuration() {
         return duration;
-
     }
 
     public void setDuration(int duration) {
@@ -60,18 +65,16 @@ public class DVD extends LibraryItem implements Reservable {
 
     public String getRating() {
         return rating;
-
     }
 
     public void setRating(String rating) {
         if (rating != null && !rating.isBlank()) {
             this.rating = rating;
         }
-}
+    }
 
     public String getGenre() {
         return genre;
-
     }
 
     public void setGenre(String genre) {
@@ -85,8 +88,10 @@ public class DVD extends LibraryItem implements Reservable {
 
     @Override
     public void reserve(LibraryMember member) {
-         reserved = true;
-         reservedBy = member;
+        if (!reserved && member != null) {
+            reserved = true;
+            reservedBy = member;
+        }
     }
 
     @Override
@@ -98,7 +103,11 @@ public class DVD extends LibraryItem implements Reservable {
     @Override
     public boolean isReserved() {
         return reserved;
+    }
 
+    @Override
+    public LibraryMember getReservedBy() {
+        return reservedBy;
     }
 
 
@@ -106,25 +115,62 @@ public class DVD extends LibraryItem implements Reservable {
 
     @Override
     public boolean matchesKeyword(String keyword) {
-         for (String field : getSearchableFields()) {
-            if (field != null &&
-                field.toLowerCase().contains(keyword.toLowerCase())) {
-                
-                    return true;
+        if (keyword == null || keyword.isBlank()) {
+            return false;
+        }
+
+        for (String field : getSearchableFields()) {
+            if (field != null
+                    && field.toLowerCase().contains(keyword.toLowerCase())) {
+                return true;
             }
         }
 
-         return false;
+        return false;
+    }
+
+    @Override
+    public boolean matchesField(String fieldName, String keyword) {
+        if (fieldName == null || keyword == null || keyword.isBlank()) {
+            return false;
+        }
+
+        if (fieldName.equalsIgnoreCase("title")) {
+            return getTitle() != null
+                    && getTitle().toLowerCase().contains(keyword.toLowerCase());
+        }
+
+        if (fieldName.equalsIgnoreCase("director")) {
+            return director != null
+                    && director.toLowerCase().contains(keyword.toLowerCase());
+        }
+
+        if (fieldName.equalsIgnoreCase("genre")) {
+            return genre != null
+                    && genre.toLowerCase().contains(keyword.toLowerCase());
+        }
+
+        if (fieldName.equalsIgnoreCase("rating")) {
+            return rating != null
+                    && rating.toLowerCase().contains(keyword.toLowerCase());
+        }
+
+        if (fieldName.equalsIgnoreCase("duration")) {
+            return String.valueOf(duration).equals(keyword.trim());
+        }
+
+        return false;
     }
 
     @Override
     public String[] getSearchableFields() {
-        return new String[] {
+        return new String[]{
             getTitle(),
             director,
-            genre
+            genre,
+            rating,
+            String.valueOf(duration)
         };
-
     }
 
 
@@ -132,20 +178,39 @@ public class DVD extends LibraryItem implements Reservable {
 
     @Override
     public double calculateLateFee(int daysLate) {
-        return daysLate * 1.00;
+        if (daysLate <= 0) {
+            return 0.0;
+        }
 
+        return daysLate * 1.00;
     }
 
     @Override
     public int getMaxBorrowDays() {
         return 7;
-
     }
 
     @Override
     public String getItemType() {
         return "DVD";
-
     }
 
+
+    // Display Method
+
+    @Override
+    public String toString() {
+        return "\n------------------------------------"
+                + "\nType: " + getItemType()
+                + "\nID: " + getId()
+                + "\nTitle: " + getTitle()
+                + "\nDirector: " + director
+                + "\nDuration: " + duration + " minutes"
+                + "\nRating: " + rating
+                + "\nGenre: " + genre
+                + "\nLocation: " + getLocation()
+                + "\nAvailable: " + (isAvailable() ? "Yes" : "No")
+                + "\nReserved: " + (reserved ? "Yes" : "No")
+                + "\n------------------------------------";
+    }
 }
