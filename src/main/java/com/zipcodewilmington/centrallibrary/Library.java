@@ -41,7 +41,6 @@ public class Library {
     }
 
     // Loads books from matts_cool_catalog.json.
-// Loads books from matts_cool_catalog.json.
     private void loadBooks() {
 
         JsonNode books = readJsonFile(
@@ -248,7 +247,7 @@ public class Library {
                         = createDate(dateText, volume);
 
                 Periodical periodical = new Periodical(
-                        id,
+                        "P" + id,
                         title,
                         "Periodical Section",
                         publisher,

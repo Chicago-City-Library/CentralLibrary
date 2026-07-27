@@ -99,28 +99,42 @@ public class MainApplication {
     }
 
     // Displays every item that is currently checked out.
-    public void viewCheckedOutItems() {
+    private void viewCheckedOutItems() {
 
-        System.out.println();
-        System.out.println("CHECKED-OUT ITEMS");
-        System.out.println("------------------------------------");
+        boolean foundCheckedOutItem = false;
 
-        List<LibraryItem> checkedOutItems
-                = library.getCheckedOutItems();
+        System.out.println("\nCHECKED OUT ITEMS");
 
-        if (checkedOutItems.isEmpty()) {
+        for (LibraryItem item : library.getCheckedOutItems()) {
 
-            System.out.println(
-                    "There are currently no checked-out items."
-            );
+            if (!item.isAvailable()) {
 
-            return;
+                foundCheckedOutItem = true;
+
+                LibraryMember member = item.getCheckedOutBy();
+
+                System.out.println("----------------------------");
+                System.out.println("Item ID: " + item.getId());
+                System.out.println("Title: " + item.getTitle());
+                System.out.println("Item Type: " + item.getItemType());
+                System.out.println("Due Date: " + item.getDueDate());
+
+                if (member != null) {
+                    System.out.println("Checked Out By: "
+                            + member.getName() + ".");
+                } else {
+                    System.out.println("Checked Out By: Unknown");
+                }
+
+                System.out.printf(
+                        "Current Late Fee: $%.2f%n",
+                        item.getCurrentLateFee());
+            }
         }
 
-        displayResults(
-                checkedOutItems,
-                "There are currently no checked-out items."
-        );
+        if (!foundCheckedOutItem) {
+            System.out.println("There are currently no checked out items.");
+        }
     }
 
     // Displays the different search choices.
@@ -780,7 +794,7 @@ public class MainApplication {
                 "555-4321",
                 "M002",
                 "2023-08-10",
-                8.50,
+                0.00,
                 address2
         );
 
@@ -791,7 +805,7 @@ public class MainApplication {
                 "555-6789",
                 "M003",
                 "2025-02-20",
-                3.25,
+                0.00,
                 address3
         );
 
