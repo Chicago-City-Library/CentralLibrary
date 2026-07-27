@@ -1,56 +1,50 @@
 package com.zipcodewilmington.centrallibrary.model;
 
-//import java.time.LocalDate;
+import com.zipcodewilmington.centrallibrary.Interface.Reservable;
+
 public class Book extends LibraryItem implements Reservable {
 
     // Instance Variables
+
     private String author;
-    //private String language;
-    //private String subjects;
-    //private String locc;
-    //private String bookshelves;
-    //private LocalDate issued;
-    //private String mediaType;
     private String isbn;
     private int pages;
     private String genre;
     private boolean reserved;
     private LibraryMember reservedBy;
 
-    // Constructor
-    public Book(String id,
+
+    // Constuctor for Jackson
+
+    public Book() {
+        super();
+    }
+
+
+    // Constructor used when manually creating books
+
+    public Book(
+            String id,
             String title,
             String location,
             String author,
-            //String language,
-            //String subjects,
-            //String locc,
-            //String bookshelves,
-            //LocalDate issued,
             String isbn,
             int pages,
-            //String type) {
             String genre) {
 
         super(id, title, location);
 
         this.author = author;
-        //this.language = language;
-        //this.subject = subject;
-        //this.locc = locc;
-        //this.bookshelve = bookshelves;
-        //this.issued = issued;
         this.isbn = isbn;
         this.pages = pages;
         this.genre = genre;
-        //this.type = type;
-
     }
 
+
     // Getters & Setters
+
     public String getAuthor() {
         return author;
-
     }
 
     public void setAuthor(String author) {
@@ -61,17 +55,16 @@ public class Book extends LibraryItem implements Reservable {
 
     public String getIsbn() {
         return isbn;
-
     }
 
     public void setIsbn(String isbn) {
-        this.isbn = isbn;
-
+        if (isbn != null && !isbn.isBlank()) {
+            this.isbn = isbn;
+        }
     }
 
     public int getPages() {
         return pages;
-
     }
 
     public void setPages(int pages) {
@@ -82,18 +75,20 @@ public class Book extends LibraryItem implements Reservable {
 
     public String getGenre() {
         return genre;
-
     }
 
     public void setGenre(String genre) {
-        this.genre = genre;
-
+        if (genre != null && !genre.isBlank()) {
+            this.genre = genre;
+        }
     }
 
+
     // Reservable Methods
+
     @Override
     public void reserve(LibraryMember member) {
-        if (!reserved) {
+        if (!reserved && member != null) {
             reserved = true;
             reservedBy = member;
         }
@@ -103,22 +98,30 @@ public class Book extends LibraryItem implements Reservable {
     public void cancelReserve() {
         reserved = false;
         reservedBy = null;
-
     }
 
     @Override
     public boolean isReserved() {
         return reserved;
-
     }
 
+    @Override
+    public LibraryMember getReservedBy() {
+        return reservedBy;
+    }
+
+
     // Searchable Methods
+
     @Override
     public boolean matchesKeyword(String keyword) {
+        if (keyword == null || keyword.isBlank()) {
+            return false;
+        }
+
         for (String field : getSearchableFields()) {
             if (field != null
                     && field.toLowerCase().contains(keyword.toLowerCase())) {
-
                 return true;
             }
         }
@@ -128,7 +131,6 @@ public class Book extends LibraryItem implements Reservable {
 
     @Override
     public boolean matchesField(String fieldName, String keyword) {
-
         if (fieldName == null || keyword == null || keyword.isBlank()) {
             return false;
         }
@@ -147,7 +149,7 @@ public class Book extends LibraryItem implements Reservable {
             return isbn != null
                     && isbn.toLowerCase().contains(keyword.toLowerCase());
         }
-        
+
         if (fieldName.equalsIgnoreCase("genre")) {
             return genre != null
                     && genre.toLowerCase().contains(keyword.toLowerCase());
@@ -161,32 +163,49 @@ public class Book extends LibraryItem implements Reservable {
         return new String[]{
             getTitle(),
             author,
-            //language,
-            //subjects,
-            //locc,
-            //bookshelves,
             genre,
             isbn
         };
-
     }
 
+
     // LibraryItem Abstract Methods
+
     @Override
     public double calculateLateFee(int daysLate) {
-        return daysLate * 0.50;
+        if (daysLate <= 0) {
+            return 0.0;
+        }
 
+        return daysLate * 0.50;
     }
 
     @Override
     public int getMaxBorrowDays() {
         return 14;
-
     }
 
     @Override
     public String getItemType() {
         return "Book";
+    }
 
+
+    // Display Method
+
+    @Override
+    public String toString() {
+        return "\n------------------------------------"
+                + "\nType: " + getItemType()
+                + "\nID: " + getId()
+                + "\nTitle: " + getTitle()
+                + "\nAuthor: " + author
+                + "\nISBN: " + isbn
+                + "\nPages: " + pages
+                + "\nGenre: " + genre
+                + "\nLocation: " + getLocation()
+                + "\nAvailable: " + (isAvailable() ? "Yes" : "No")
+                + "\nReserved: " + (reserved ? "Yes" : "No")
+                + "\n------------------------------------";
     }
 }

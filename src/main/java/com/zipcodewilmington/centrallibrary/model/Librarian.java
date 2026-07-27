@@ -2,26 +2,31 @@ package com.zipcodewilmington.centrallibrary.model;
 
 public class Librarian extends Person {
 
-private String employeeId;
-private String department;
-private double salary;
+    private String employeeId;
+    private String department;
+    private double salary;
 
-public Librarian(
-        String name,
-        int age,
-        String email,
-        String phoneNumber,
-        String employeeId,
-        String department,
-        double salary) {
+    public Librarian() {
+        super();
+    }
 
-    super(name, age, email, phoneNumber);
+    public Librarian(
+            String name,
+            int age,
+            String email,
+            String phoneNumber,
+            String employeeId,
+            String department,
+            double salary) {
 
-    this.employeeId = employeeId;
-    this.department = department;
-    this.salary = salary;
-        }
-    public String getEmployedId() {
+        super(name, age, email, phoneNumber);
+
+        this.employeeId = employeeId;
+        this.department = department;
+        this.salary = salary;
+    }
+
+    public String getEmployeeId() {
         return employeeId;
     }
 
@@ -33,19 +38,17 @@ public Librarian(
         return salary;
     }
 
-public void setEmployeeId(String employeeId) {
-    this.employeeId = employeeId;
-}
+    public void setEmployeeId(String employeeId) {
+        this.employeeId = employeeId;
+    }
 
-public void setDepartment(String department) {
-    this.department = department;
-}
+    public void setDepartment(String department) {
+        this.department = department;
+    }
 
-public void setSalary(double salary) {
-    this.salary = salary;
+    public void setSalary(double salary) {
+        this.salary = salary;
 
-        
     }
 
 }
-
